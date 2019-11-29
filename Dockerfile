@@ -1,8 +1,11 @@
-FROM mhart/alpine-node:10 AS build
+FROM mhart/alpine-node:latest
 
-ARG apiUrl
+ENV API_URL https://blockstream.info/api
+ENV PORT 5000
 
-RUN apk add --no-cache git \
+RUN apk update && apk add --no-cache \
+  git \
+  nginx \
   build-base \
   g++ \
   cairo-dev \
@@ -10,26 +13,15 @@ RUN apk add --no-cache git \
   pango-dev \
   bash \
   imagemagick
-RUN git clone https://github.com/Blockstream/esplora.git 
 
-WORKDIR /esplora
+RUN git clone https://github.com/Blockstream/esplora.git \
+  && cd esplora \
+  && npm install --unsafe-perm 
 
-ENV API_URL=${apiUrl}
-ENV CORS_ALLOW=*
+COPY docker-entrypoint.sh /opt
 
-RUN npm install && \
-  npm run postinstall && \
-  npm run dist
-
-FROM nginx:alpine
-
-WORKDIR /usr/share/nginx/html
-
-COPY --from=build /esplora/dist ./
-COPY esplora.conf /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/nginx.conf
+RUN chmod +x /opt/docker-entrypoint.sh
 
 EXPOSE 5000
 
-ENTRYPOINT ["nginx"]
-CMD ["-g", "daemon off;"]
+ENTRYPOINT [ "/opt/docker-entrypoint.sh" ]
