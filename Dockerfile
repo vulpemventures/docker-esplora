@@ -1,27 +1,18 @@
-FROM mhart/alpine-node:latest
+FROM node:10-alpine as builder
 
-ENV API_URL https://blockstream.info/api
-ENV PORT 5000
+RUN apk update && apk add --no-cache git
 
-RUN apk update && apk add --no-cache \
-  git \
-  nginx \
-  build-base \
-  g++ \
-  cairo-dev \
-  jpeg-dev \
-  pango-dev \
-  bash \
-  imagemagick
+RUN git clone https://github.com/Blockstream/esplora.git && \
+  cd esplora && \
+  npm install --unsafe-perm
 
-RUN git clone https://github.com/Blockstream/esplora.git \
-  && cd esplora \
-  && npm install --unsafe-perm 
+ARG API_URL
 
-COPY docker-entrypoint.sh /opt
+WORKDIR /esplora
 
-RUN chmod +x /opt/docker-entrypoint.sh
+ENV CORS_ALLOW=*
+ENV API_URL={API_URL}
 
 EXPOSE 5000
 
-ENTRYPOINT [ "/opt/docker-entrypoint.sh" ]
+CMD [ "npm", "run", "dev-server" ]
