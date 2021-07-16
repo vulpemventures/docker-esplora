@@ -1,6 +1,6 @@
 FROM node:10-alpine as builder
 
-ENV COMMIT_SHA 1efe58f412445cd0f94624455f750dcda9cd4bff
+ENV COMMIT_SHA 856fd384ce81f48641e72d4f76d553ff4c05defe
 
 RUN apk update && apk add --no-cache git
 
