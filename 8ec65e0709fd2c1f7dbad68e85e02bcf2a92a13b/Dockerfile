@@ -1,4 +1,4 @@
-FROM node:10-alpine as builder
+FROM node:16-alpine
 
 ENV COMMIT_SHA=856fd384ce81f48641e72d4f76d553ff4c05defe
 
