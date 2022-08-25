@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_NAME: esplora
-  COMMIT_SHA: 7d9a260a0a07824ca03cd02859a318344ff418e1
+  COMMIT_SHA: beb2cff88d63bea6991a5a9a0b11b2a45d13ee6b
 
 jobs:
   # Push image to GitHub Packages.
